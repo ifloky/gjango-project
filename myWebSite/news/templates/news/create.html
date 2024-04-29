@@ -9,7 +9,6 @@
   <h1>{{ title }}</h1>
   <form method="post">
     {% csrf_token %}
-
     {{ data.form.title}}</br>
     {{ data.form.anons }}</br>
     {{ data.form.full_text }}</br>

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Articles
 from .forms import ArticlesForm 
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import DetailView, UpdateView, DeleteView
 
 def news_home(request):
   news = Articles.objects.order_by('date')
@@ -17,22 +17,27 @@ class NewsUpdateView(UpdateView):
   template_name = 'news/create.html'
   form_class = ArticlesForm
 
+class NewsDeleteView(DeleteView):
+  model = Articles
+  success_url = '/news'
+  template_name = 'news/news-delete.html'
+
 def create(request): 
-  error = ''
+    error = ''
 
-  if request.method == 'POST':
-    form = ArticlesForm(request.POST)
-    if form.is_valid():
-      form.save()
-      return redirect('news')
-    else: 
-      error = 'Форма была неверной'
+    if request.method == 'POST':
+        form = ArticlesForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('news_home')  # Redirect to 'news_home' instead of 'news'
+        else: 
+            error = 'Форма была неверной'
 
-  form = ArticlesForm()
+    form = ArticlesForm()
 
-  data = {
-    'form': form,
-    'error': error
-  }
+    data = {
+        'form': form,
+        'error': error
+    }
 
-  return render(request, 'news/create.html', {'title': "Добавление статьи", 'data':data})
+    return render(request, 'news/create.html', {'title': "Добавление статьи", 'data': data})
